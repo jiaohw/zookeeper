@@ -397,6 +397,12 @@ BUGFIXES:
   ZOOKEEPER-2611: zoo_remove_watchers - can remove the wrong watch
   (Eyal Leshmem via rgs)
 
+  ZOOKEEPER-2467: NullPointerException when redo Command is passed negative value
+  (Rakesh Kumar Singh via rakeshr)
+
+  ZOOKEEPER-2606: SaslServerCallbackHandler#handleAuthorizeCallback() should log
+  the exception (Ted Yu via fpj) 
+
 IMPROVEMENTS:
   ZOOKEEPER-2024 Major throughput improvement with mixed workloads (Kfir Lev-Ari via shralex)
 
@@ -534,6 +540,12 @@ IMPROVEMENTS:
 
   ZOOKEEPER-2594: Use TLS for downloading artifacts during build
   (Olaf Flebbe via phunt)
+
+  ZOOKEEPER-2631: Make issue extraction in the git pull request script
+  more robust (Flavio P. Junqueira via rgs)
+
+  ZOOKEEPER-2632: Add option to inform JIRA_PASSWORD at CLI prompt
+  (Edward Ribeiro via phunt)
 
 Release 3.5.0 - 8/4/2014
 

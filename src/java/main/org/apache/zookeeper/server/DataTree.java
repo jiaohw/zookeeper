@@ -245,15 +245,23 @@ public class DataTree {
         addConfigNode();
     }
 
-     public void addConfigNode() {
-    	 DataNode zookeeperZnode = nodes.get(procZookeeper);
-         if (zookeeperZnode!=null) { // should always be the case
-        	 zookeeperZnode.addChild(configChildZookeeper);
-         } else {
-        	 LOG.error("There's no /zookeeper znode - this should never happen");
-         }
-         nodes.put(configZookeeper, configDataNode);   
-     }
+    public void addConfigNode() {
+        DataNode zookeeperZnode = nodes.get(procZookeeper);
+        if (zookeeperZnode != null) { // should always be the case
+            zookeeperZnode.addChild(configChildZookeeper);
+        } else {
+            assert false : "There's no /zookeeper znode - this should never happen.";
+        }
+
+        nodes.put(configZookeeper, configDataNode);
+        try {
+            // Reconfig node is access controlled by default (ZOOKEEPER-2014).
+            setACL(configZookeeper, ZooDefs.Ids.READ_ACL_UNSAFE, -1);
+        } catch (KeeperException.NoNodeException e) {
+            assert false : "There's no " + configZookeeper +
+                    " znode - this should never happen.";
+        }
+    }
 
     /**
      * is the path one of the special paths owned by zookeeper.
@@ -1293,13 +1301,12 @@ public class DataTree {
      * @param pwriter the output to write to
      */
     public void dumpEphemerals(PrintWriter pwriter) {
-        Set<Long> keys = ephemerals.keySet();
         pwriter.println("Sessions with Ephemerals ("
-                + keys.size() + "):");
-        for (long k : keys) {
-            pwriter.print("0x" + Long.toHexString(k));
+                + ephemerals.keySet().size() + "):");
+        for (Entry<Long, HashSet<String>> entry : ephemerals.entrySet()) {
+            pwriter.print("0x" + Long.toHexString(entry.getKey()));
             pwriter.println(":");
-            HashSet<String> tmp = ephemerals.get(k);
+            HashSet<String> tmp = entry.getValue();
             if (tmp != null) {
                 synchronized (tmp) {
                     for (String path : tmp) {
